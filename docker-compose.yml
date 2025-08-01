@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  nexum-app:
+    build: .
+    depends_on: [postgres_db,redis]
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/nexum
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=test12345
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+    restart: always
+
+
+  postgres_db:
+    image: postgres:latest
+    container_name: PostgresCont
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=test12345
+      - POSTGRES_DB=nexum
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - '8888:8080'
+  redis:
+    image: redis:latest
+    container_name: RedisCont
+    ports:
+      - '6379:6379'
+    restart: always
+
+volumes:
+  postgres_data:
+
